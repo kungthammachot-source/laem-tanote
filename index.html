@@ -8,105 +8,66 @@
     <link rel="stylesheet" href="https://cloudflare.com">
     
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Sarabun', sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; }
+        body { background-color: #f0f4f3; color: #333; max-width: 480px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.1); min-height: 100vh; position: relative; padding-bottom: 75px; }
+        
+        /* สไตล์หน้า Login */
+        .login-screen { padding: 40px 20px; text-align: center; background: white; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+        .login-logo { font-size: 50px; color: #0288d1; margin-bottom: 15px; }
+        .login-screen h2 { color: #004d40; margin-bottom: 5px; font-size: 24px; }
+        .login-screen p { color: #666; font-size: 14px; margin-bottom: 30px; }
+        .role-selector { display: flex; gap: 10px; margin-bottom: 20px; }
+        .role-btn { flex: 1; padding: 12px; border: 2px solid #ddd; border-radius: 10px; background: white; cursor: pointer; font-weight: 600; color: #666; font-size: 14px; }
+        .role-btn.active { border-color: #0288d1; color: #0288d1; background: #e1f5fe; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; font-size: 13px; color: #666; margin-bottom: 5px; font-weight: 600; }
+        .input-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; }
+        .btn-login { background: linear-gradient(135deg, #0288d1, #26a69a); color: white; border: none; padding: 14px; width: 100%; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
 
-        body {
-            background-color: #f0f4f3;
-            color: #333;
-            max-width: 480px;
-            margin: 0 auto;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            min-height: 100vh;
-            padding-bottom: 75px;
-            position: relative;
-        }
-
-        header {
-            background: linear-gradient(135deg, #0288d1, #26a69a);
-            color: white;
-            padding: 25px 20px;
-            text-align: center;
-            border-bottom-left-radius: 25px;
-            border-bottom-right-radius: 25px;
-        }
-
-        header h1 { font-size: 24px; font-weight: 700; margin-bottom: 5px; }
-        header p { font-size: 13px; opacity: 0.9; }
-
+        /* สไตล์หน้าหลักแอป */
+        .main-app { display: none; }
+        header { background: linear-gradient(135deg, #0288d1, #26a69a); color: white; padding: 25px 20px; text-align: center; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; position: relative; }
+        header h1 { font-size: 22px; font-weight: 700; margin-bottom: 5px; }
+        header p { font-size: 12px; opacity: 0.9; }
+        .btn-logout { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); border: none; color: white; padding: 5px 10px; border-radius: 5px; font-size: 11px; cursor: pointer; }
+        
         .container { padding: 15px; }
-
-        /* การ์ดแดชบอร์ดแต้มดิจิทัล */
-        .wallet-card {
-            background: linear-gradient(135deg, #111, #333);
-            color: white;
-            border-radius: 15px;
-            padding: 15px 20px;
-            margin-top: -20px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        
+        /* การ์ดกระเป๋าแต้มดิจิทัล (ฝั่งลูกค้า) */
+        .wallet-card { background: linear-gradient(135deg, #111, #333); color: white; border-radius: 15px; padding: 15px 20px; margin-top: -20px; margin-bottom: 20px; box-shadow: 0 8px 15px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; }
         .wallet-info h4 { font-size: 12px; color: #aaa; font-weight: 400; }
         .wallet-info .points { font-size: 28px; font-weight: 700; color: #ffca28; }
-        .wallet-badge { background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; font-size: 12px; }
+        .wallet-badge { background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; font-size: 11px; }
 
-        /* หน้าต่างกล้องสแกน QR จำลอง */
-        .scanner-container {
-            background: #000;
-            border-radius: 15px;
-            overflow: hidden;
-            margin-bottom: 20px;
-            display: none;
-            position: relative;
-        }
+        /* พื้นที่กล้องถ่ายรูปสแกน */
+        .scanner-container { background: #000; border-radius: 15px; overflow: hidden; margin-bottom: 20px; display: none; position: relative; }
         video { width: 100%; height: 250px; object-fit: cover; }
-        .scanner-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border: 40px solid rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
-        }
+        .scanner-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 40px solid rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; }
         .scan-window { width: 140px; height: 140px; border: 3px solid #26a69a; border-radius: 10px; animation: pulse 1.5s infinite; }
-        
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(38, 166, 154, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(38, 166, 154, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(38, 166, 154, 0); }
-        }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(38, 166, 154, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(38, 166, 154, 0); } 100% { box-shadow: 0 0 0 0 rgba(38, 166, 154, 0); } }
 
-        .btn-action {
-            background: #26a69a; color: white; border: none; padding: 14px;
-            width: 100%; border-radius: 10px; font-size: 16px; font-weight: 600;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-            box-shadow: 0 4px 6px rgba(38,166,154,0.2); margin-bottom: 20px;
-        }
+        .btn-action { background: #26a69a; color: white; border: none; padding: 14px; width: 100%; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px rgba(38,166,154,0.2); margin-bottom: 20px; }
         .btn-action.scanning { background: #e53935; }
 
-        /* ส่วนเนื้อหาแท็บ */
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* รายการสถานที่ในแผนที่ */
-        .place-card {
-            background: white; padding: 15px; border-radius: 12px; margin-bottom: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; gap: 15px; align-items: center;
-        }
-        .place-img-thumb { width: 70px; height: 70px; background: #ddd; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #999; }
+        /* การ์ดร้านค้าและของรางวัล */
+        .place-card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; gap: 15px; align-items: center; justify-content: space-between; }
+        .place-main { display: flex; gap: 15px; align-items: center; }
+        .place-img-thumb { width: 60px; height: 60px; background: #e0f2f1; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #26a69a; }
         .place-info h4 { font-size: 15px; color: #004d40; margin-bottom: 4px; }
         .place-info p { font-size: 12px; color: #666; }
+        .btn-redeem { background: #ff9800; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+
+        /* สไตล์ฝั่งร้านค้าเข้าร่วมโครงการ */
+        .shop-dashboard { display: none; padding: 15px; }
+        .shop-stat-card { background: white; padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 5px solid #26a69a; }
+        .shop-stat-card h3 { font-size: 14px; color: #666; }
+        .shop-stat-card .num { font-size: 32px; font-weight: 700; color: #26a69a; margin: 5px 0; }
 
         /* แถบเมนูด้านล่าง */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-            width: 100%; max-width: 480px; background: white; display: flex;
-            justify-content: space-around; padding: 12px 0; box-shadow: 0 -3px 10px rgba(0,0,0,0.08);
-            border-top-left-radius: 15px; border-top-right-radius: 15px; z-index: 1000;
-        }
+        .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: white; display: flex; justify-content: space-around; padding: 12px 0; box-shadow: 0 -3px 10px rgba(0,0,0,0.08); border-top-left-radius: 15px; border-top-right-radius: 15px; z-index: 1000; }
         .nav-link { text-decoration: none; color: #888; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
         .nav-link.active { color: #0288d1; }
         .nav-link i { font-size: 20px; }
@@ -114,112 +75,71 @@
 </head>
 <body>
 
-    <header>
-        <h1>เช็คอินแหลมโตนด</h1>
-        <p><i class="fa-solid fa-xs fa-wifi"></i> แพลตฟอร์มขับเคลื่อนการท่องเที่ยวชุมชนดิจิทัล</p>
-    </header>
-
-    <div class="container">
-        <!-- กระเป๋าแต้มดิจิทัลชุมชน -->
-        <div class="wallet-card">
-            <div class="wallet-info">
-                <h4>แต้มสะสมดิจิทัลชุมชน</h4>
-                <div class="points" id="userPoints">0 <span style="font-size:14px; color:#fff;">Points</span></div>
-            </div>
-            <div class="wallet-badge"><i class="fa-solid fa-id-card"></i> นักท่องเที่ยวทั่วไป</div>
+    <!-- 1. หน้าจอเข้าสู่ระบบ (Login Screen) -->
+    <div id="loginPage" class="login-screen">
+        <div class="login-logo"><i class="fa-solid fa-map-location-dot"></i></div>
+        <h2>เช็คอินแหลมโตนด</h2>
+        <p>ระบบท่องเที่ยวชุมชนดิจิทัลและสะสมแต้ม</p>
+        
+        <div class="role-selector">
+            <button id="roleCustomer" class="role-btn active" onclick="setRole('customer')">🙋‍♂️ นักท่องเที่ยว</button>
+            <button id="roleShop" class="role-btn" onclick="setRole('shop')">🏪 ร้านค้าชุมชน</button>
         </div>
 
-        <!-- แท็บหน้าแรก -->
-        <div id="home-tab" class="tab-content active">
-            <!-- ส่วนระบบกล้องเช็คอิน -->
-            <div class="scanner-container" id="scannerArea">
-                <video id="webcam" autoplay playsinline></video>
-                <div class="scanner-overlay">
-                    <div class="scan-window"></div>
-                </div>
-            </div>
-
-            <button class="btn-action" id="scanBtn" onclick="toggleScanner()">
-                <i class="fa-solid fa-qrcode"></i> <span id="btnText">เปิดกล้องสแกน QR Code เช็คอิน</span>
-            </button>
-
-            <!-- แหล่งท่องเที่ยวแนะนำ -->
-            <h3 style="font-size: 16px; margin: 15px 0 10px 0; color: #004d40;"><i class="fa-solid fa-star text-orange"></i> แนะนำโดยชุมชน</h3>
-            <div class="place-card">
-                <div class="place-img-thumb"><i class="fa-solid fa-lighthouse fa-lg"></i></div>
-                <div class="place-info">
-                    <h4>ประภาคารแหลมโตนด</h4>
-                    <p>จุดชมวิวทะเลสองฝั่งและต้นโตนดโบราณ</p>
-                </div>
-            </div>
-            <div class="place-card">
-                <div class="place-img-thumb"><i class="fa-solid fa-fish fa-lg"></i></div>
-                <div class="place-info">
-                    <h4>ตลาดปลาวิถีประมงพื้นบ้าน</h4>
-                    <p>อุดหนุนอาหารทะเลสดๆ ตรงจากเรือของชาวบ้าน</p>
-                </div>
-            </div>
+        <div class="input-group">
+            <label id="loginLabel">เบอร์โทรศัพท์มือถือ</label>
+            <input type="text" id="usernameInput" placeholder="กรอกเบอร์โทรศัพท์ หรือ ชื่อร้านค้า" value="0812345678">
+        </div>
+        <div class="input-group">
+            <label>รหัสผ่าน (PIN)</label>
+            <input type="password" id="passwordInput" placeholder="••••••" value="123456">
         </div>
 
-        <!-- แท็บแผนที่ท่องเที่ยวดิจิทัล -->
-        <div id="map-tab" class="tab-content">
-            <h3 style="font-size: 16px; margin-bottom: 15px; color: #004d40;"><i class="fa-solid fa-map-marked-alt"></i> แผนที่จุดเช็คอินรับแต้ม</h3>
-            <!-- กล่องจำลองแผนที่แบบ Interactive -->
-            <div style="background: #e0f2f1; height: 200px; border-radius: 12px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; flex-direction: column; border: 2px solid #26a69a; color: #00796b;">
-                <i class="fa-solid fa-map-location-dot fa-2x" style="margin-bottom: 8px;"></i>
-                <p style="font-size: 13px; font-weight: 600;">ระบบนำทางชุมชนดิจิทัล GPS</p>
-                <span style="font-size: 11px; opacity: 0.8;">คลิกเลือกสถานที่ด้านล่างเพื่อเปิดนำทาง</span>
-            </div>
-
-            <div class="place-card" style="cursor:pointer;" onclick="simulateNavigate('ประภาคาร')">
-                <div class="place-info">
-                    <h4>📍 จุดที่ 1: ประภาคารแหลมโตนด (+50 แต้ม)</h4>
-                    <p>ห่างจากคุณ 350 เมตร · คลิกเพื่อนำทาง</p>
-                </div>
-            </div>
-            <div class="place-card" style="cursor:pointer;" onclick="simulateNavigate('จุดชมวิวหินงาม')">
-                <div class="place-info">
-                    <h4>📍 จุดที่ 2: ผาหินงามชุมชน (+40 แต้ม)</h4>
-                    <p>ห่างจากคุณ 1.2 กิโลเมตร · คลิกเพื่อนำทาง</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- แท็บของรางวัลคูปอง -->
-        <div id="rewards-tab" class="tab-content">
-            <h3 style="font-size: 16px; margin-bottom: 15px; color: #004d40;"><i class="fa-solid fa-gift"></i> สิทธิประโยชน์เพื่อชุมชน</h3>
-            <div class="place-card" style="border-left: 5px solid #ff9800;">
-                <div class="place-info">
-                    <h4>🎁 ส่วนลดของฝากชุมชน 50 บาท</h4>
-                    <p>ใช้ 100 แต้มดิจิทัล · แลกรับได้ที่กลุ่มแม่บ้านแหลมโตนด</p>
-                </div>
-            </div>
-            <div class="place-card" style="border-left: 5px solid #ff9800;">
-                <div class="place-info">
-                    <h4>☕ ฟรีเครื่องดื่มต้อนรับจากโฮมสเตย์</h4>
-                    <p>ใช้ 60 แต้มดิจิทัล · แลกรับเมื่อเข้าพักโฮมสเตย์ใดก็ได้ในชุมชน</p>
-                </div>
-            </div>
-        </div>
+        <button class="btn-login" onclick="handleLogin()">เข้าสู่ระบบ</button>
     </div>
 
-    <!-- เมนูด้านล่างควบคุมการเปลี่ยนหน้า -->
-    <nav class="bottom-nav">
-        <div class="nav-link active" onclick="switchTab('home-tab', this)">
-            <i class="fa-solid fa-house"></i><span>หน้าแรก</span>
-        </div>
-        <div class="nav-link" onclick="switchTab('map-tab', this)">
-            <i class="fa-solid fa-map"></i><span>แผนที่</span>
-        </div>
-        <div class="nav-link" onclick="switchTab('rewards-tab', this)">
-            <i class="fa-solid fa-award"></i><span>สิทธิพิเศษ</span>
-        </div>
-    </nav>
+    <!-- 2. หน้าหลักสำหรับ "นักท่องเที่ยว / ลูกค้า" -->
+    <div id="customerApp" class="main-app">
+        <header>
+            <button class="btn-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> ออกระบบ</button>
+            <h1 id="welcomeUser">ยินดีต้อนรับ คุณนักท่องเที่ยว</h1>
+            <p><i class="fa-solid fa-camera"></i> ถ่ายรูปเช็คอินตามจุด แลกส่วนลดร้านค้าชุมชน</p>
+        </header>
 
-    <script>
-        let currentPoints = 0;
-        let isScanning = false;
-        let streamRef = null;
+        <div class="container">
+            <div class="wallet-card">
+                <div class="wallet-info">
+                    <h4>แต้มสะสมดิจิทัลของคุณ</h4>
+                    <div class="points" id="userPoints">0 <span style="font-size:14px; color:#fff;">Points</span></div>
+                </div>
+                <div class="wallet-badge"><i class="fa-solid fa-star"></i> สมาชิกชุมชน</div>
+            </div>
 
-        // ฟังก์ชันสลับหน้าเว็บ (Tabs)
-        function switchTab(tabId, el) {
+            <!-- แท็บถ่ายรูปเช็คอิน -->
+            <div id="tab-scan" class="tab-content active">
+                <div class="scanner-container" id="cameraArea">
+                    <video id="webcam" autoplay playsinline></video>
+                    <div class="scanner-overlay"><div class="scan-window"></div></div>
+                </div>
+
+                <button class="btn-action" id="cameraBtn" onclick="toggleCamera()">
+                    <i class="fa-solid fa-camera"></i> <span id="btnText">เปิดกล้องถ่ายรูปเช็คอินรับ 50 แต้ม</span>
+                </button>
+
+                <h3 style="font-size: 15px; margin-bottom: 10px; color: #004d40;"><i class="fa-solid fa-location-dot"></i> จุดถ่ายรูปเช็คอินแหลมโตนด</h3>
+                <div class="place-card">
+                    <div class="place-main">
+                        <div class="place-img-thumb"><i class="fa-solid fa-lighthouse"></i></div>
+                        <div class="place-info"><h4>จุดที่ 1: ประภาคารแหลมโตนด</h4><p>ถ่ายภาพคู่ประภาคารโบราณเพื่อรับแต้ม</p></div>
+                    </div>
+                </div>
+                <div class="place-card">
+                    <div class="place-main">
+                        <div class="place-img-thumb"><i class="fa-solid fa-umbrella-beach"></i></div>
+                        <div class="place-info"><h4>จุดที่ 2: ผาหินงามชายหาด</h4><p>จุดชมวิวทะเลสองฝั่งสุด Unseen</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- แท็บแลกส่วนลดร้านค้าที่ร่วมโครงการ -->
+            <div id="tab-discounts" class="tab-content">
